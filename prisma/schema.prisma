@@ -1,0 +1,160 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Recipe {
+  id           String  @id @default(uuid())
+  title        String  @unique
+  description  String?
+  ingredients  String
+  instructions String
+}
+
+enum LoginType {
+  Normal
+  GitHub
+  Gmail
+  Facebook
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  image         String?
+  email         String?   @unique
+  emailVerified Boolean   @default(false)
+  phone         String    @unique
+  password      String?
+  loginType     LoginType @default(Normal)
+  // address       Json
+  street        String?
+  village       String?
+  city          String?
+  state         String?
+  country       String?
+  survey        String?
+  landmark      String?
+
+  // // Define a foreign key to reference the Role model
+  // roleId         Int
+
+  // // Define a foreign key to reference the Project model
+  // projectId      Int?
+
+  // // Define a foreign key to reference the Project model
+  // ownedProjectId Int?
+
+  // // Define a foreign key to reference the SiteVisit model
+  // siteVisitId    Int?
+
+  // // Define relationships with other models
+  // // role           Role       @relation(fields: [roleId], references: [id])
+  // project        Project?   @relation(fields: [projectId], references: [id])
+  // ownedProject   Project?   @relation("projectOwnership", fields: [ownedProjectId], references: [id])
+  // siteVisit      SiteVisit? @relation(fields: [siteVisitId], references: [id])
+}
+
+enum Role {
+  Admin
+  Agent
+  User
+}
+
+enum ProjectCategory {
+  Villas
+  Individual_Houses
+  Apartments
+  Plots
+  Grouped_House
+  Gated_Community
+  Semi_Gated_Community
+  Standalone_Building
+
+  @@map("ProjectCategory")
+}
+
+// model Project {
+//   id           Int      @id @default(autoincrement())
+//   title       String
+//   images      String[]
+//   description String
+//   address     Address
+//   startDate   DateTime?
+//   status      ProjectStatus@default(Available)
+
+//   location  String?
+//   category  ProjectCategory
+//   units     Int
+//   soldUnits Int
+
+//   ownerId String? @db.ObjectId
+//   owner   User?   @relation("projectOwnership", fields: [ownerId], references: [id])
+
+//   agentIds String[]   @db.ObjectId
+//   agents   User[]     @relation("projectAgent", fields: [agentIds], references: [id])
+//   Prospect Prospect[]
+// 	@@map("Project")
+// }
+
+enum ProspectStatus {
+  Created // Just added the record
+  Site_Visit // In Site Visit state
+  Pending // Pending from prospect
+  Interested // Covert to buy
+  NotInterested // No more a prospect
+  Bought // Success
+  Dropped // Dropped somewhere in the progress
+  Absconded // Not reachable
+}
+
+enum ProjectStatus {
+  Available
+  Sold_Out
+}
+
+// model Prospect {
+//   id           Int      @id @default(autoincrement())
+//   name       String
+//   phone      String
+//   address    Address?
+//   status     ProspectStatus @default(Created)
+//   siteVisits SiteVisit[]
+//   projectId  String         @db.ObjectId
+//   project    Project        @relation(fields: [projectId], references: [id])
+// }
+
+enum SiteVisitStatus {
+  Requested
+  Rejected
+  Accepted
+  VehicleAllocated
+  Scheduled
+  InProgress
+  Success
+  Failure
+}
+
+// model SiteVisit {
+//   id           Int      @id @default(autoincrement())
+
+//   prospectId String   @db.ObjectId
+//   prospect   Prospect @relation(fields: [prospectId], references: [id])
+
+//   agentId String @db.ObjectId
+//   agent   User   @relation(fields: [agentId], references: [id])
+
+//   status SiteVisitStatus @default(Requested)
+
+//   address Address?
+// }
